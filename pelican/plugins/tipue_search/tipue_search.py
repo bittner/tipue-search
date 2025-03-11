@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Tipue Search
 ============
@@ -9,18 +8,12 @@ that can be used by jQuery plugin - Tipue Search.
 Copyright (c) Talha Mansoor
 """
 
-from __future__ import unicode_literals
-
 from codecs import open
+from urllib.parse import urljoin
 import json
 import os.path
 
 from bs4 import BeautifulSoup
-
-try:
-    from urlparse import urljoin
-except ImportError:
-    from urllib.parse import urljoin
 
 from pelican import signals
 
@@ -104,7 +97,7 @@ class Tipue_Search_JSON_Generator(object):
         self.json_nodes.append(node)
 
     def generate_output(self, writer):
-        path = os.path.join(self.output_path, "tipuesearch_content.js")
+        path = os.path.join(self.output_path, "tipuesearch_content.json")
 
         pages = self.context["pages"] + self.context["articles"]
 
@@ -118,14 +111,8 @@ class Tipue_Search_JSON_Generator(object):
             self.create_json_node(page)
         root_node = {"pages": self.json_nodes}
 
-        root_node_js = (
-            "var tipuesearch = "
-            + json.dumps(root_node, separators=(",", ":"), ensure_ascii=False)
-            + ";"
-        )
-
         with open(path, "w", encoding="utf-8") as fd:
-            fd.write(root_node_js)
+            json.dump(root_node, fd, separators=(',', ':'), ensure_ascii=False)
 
 
 def get_generators(generators):
